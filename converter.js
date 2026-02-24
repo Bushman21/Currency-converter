@@ -3,6 +3,7 @@ const amountInput = document.getElementById('amount');
 const fromCurrency = document.getElementById('fromCurrency');
 const toCurrency = document.getElementById('toCurrency');
 const convertBtn = document.getElementById('convertBtn');
+const resetBtn = document.getElementById('resetBtn');
 const result = document.getElementById('result');
 
 // Convert function
@@ -44,6 +45,16 @@ async function convertCurrency() {
         console.error(error);
     }
 }
+// Reset function
+function resetConverter() {
+    amountInput.value = "";
+    fromCurrency.selectedIndex = 0;
+    toCurrency.selectedIndex = 1;
+    result.textContent = "";
+    amountInput.focus();
+}
+
 
 // Add event listener
 convertBtn.addEventListener("click", convertCurrency);
+resetBtn.addEventListener("click", resetConverter);
