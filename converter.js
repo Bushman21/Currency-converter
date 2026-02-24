@@ -7,30 +7,43 @@ const result = document.getElementById('result');
 
 // Convert function
 async function convertCurrency() {
-    const amount = parseFloat(amountInput.value);
+
+    const amount = parseFloat(amountInput.value.trim());
     const from = fromCurrency.value;
     const to = toCurrency.value;
 
-    if (isNaN(amount)) {
-        result.textContent = 'Please enter a valid amount 💡';
+    // Validation
+    if (isNaN(amount) || amount <= 0) {
+        result.textContent = "Enter a valid positive number 💡";
         return;
     }
 
     try {
-        // Fetch exchange rate from API
-        const response = await fetch(`https://api.exchangerate.host/convert?from=${from}&to=${to}&amount=${amount}`);
+        const response = await fetch(`https://open.er-api.com/v6/latest/${from}`);
         const data = await response.json();
 
-        if (data.result !== undefined) {
-            result.textContent = `${amount} ${from} = ${data.result.toFixed(2)} ${to}`;
+        if (data.result === "success") {
+
+            const rate = data.rates[to];
+
+            if (!rate) {
+                result.textContent = "Invalid currency selection 😔";
+                return;
+            }
+
+            const converted = amount * rate;
+
+            result.textContent = `${amount} ${from} = ${converted.toFixed(2)} ${to}`;
+
         } else {
-            result.textContent = 'Conversion failed 😔';
+            result.textContent = "Conversion failed 😔";
         }
+
     } catch (error) {
-        result.textContent = 'Error fetching exchange rate ⚠️';
+        result.textContent = "Network error ⚠️";
         console.error(error);
     }
 }
 
-// Event listener
-convertBtn.addEventListener('click', convertCurrency);
+// Add event listener
+convertBtn.addEventListener("click", convertCurrency);
